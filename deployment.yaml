@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webssite-app
+spec:
+  selector:
+    matchLabels:
+      app: webssite-app
+  template:
+    metadata:
+      labels:
+        app: webssite-app
+    spec:
+      containers:
+      - name: webssite-app
+        image: salihteyek/website
+        resources:
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webssite-app-ingress
+spec:
+  selector:
+    app: webssite-app-ingress
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webssite-app-ingress
+spec:
+  rules:
+    - host: salihteyek.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: webssite-app-ingress
+                port:
+                  number: 80
